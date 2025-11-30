@@ -21,7 +21,7 @@ runs:
         path: |
           ~/.cache/pip
           ~/.platformio/.cache
-        key: ${{ runner.os }}-pio-${{ hashFiles('exampleApp/platformio.ini') }}
+        key: ${{ runner.os }}-pio-${{ hashFiles('MageWithABadApple/platformio.ini') }}
         restore-keys: |
           ${{ runner.os }}-pio-
 
@@ -31,33 +31,33 @@ runs:
 
     - name: Build PlatformIO Project
       shell: bash
-      working-directory: exampleApp
+      working-directory: MageWithABadApple
       run: pio run
 
-    - name: Prepare exampleApp Package
+    - name: Prepare MageWithABadApple Package
       shell: bash
-      working-directory: exampleApp
+      working-directory: MageWithABadApple
       run: |
         # Rename icon
-        cp exampleApp/exampleApp_ICON.bin exampleApp_ICON.bin
+        cp MageWithABadApple/MageWithABadApple_ICON.bin MageWithABadApple_ICON.bin
 
         # Rename firmware
-        cp .pio/build/*/firmware.bin exampleApp.bin
+        cp .pio/build/*/firmware.bin MageWithABadApple.bin
 
         # Create uncompressed tar
-        tar -cf exampleApp.tar exampleApp.bin exampleApp_ICON.bin
+        tar -cf MageWithABadApple.tar MageWithABadApple.bin MageWithABadApple_ICON.bin
 
     - name: Update Latest Build
       shell: bash
-      working-directory: exampleApp
+      working-directory: MageWithABadApple
       run: |
         mkdir -p latest
-        cp exampleApp.tar latest/
+        cp MageWithABadApple.tar latest/
 
-    - name: Upload exampleApp Package
+    - name: Upload MageWithABadApple Package
       if: inputs.upload_artifact == 'true'
       uses: actions/upload-artifact@v4
       with:
-        name: exampleApp_pocketmage
-        path: exampleApp/exampleApp.tar
+        name: MageWithABadApple_pocketmage
+        path: MageWithABadApple/MageWithABadApple.tar
         retention-days: 30
