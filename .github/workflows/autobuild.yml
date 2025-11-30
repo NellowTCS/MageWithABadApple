@@ -1,0 +1,25 @@
+name: Build the Example App
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+    branches: [main]
+  workflow_dispatch:
+
+permissions:
+  contents: read
+
+jobs:
+  pocketmage-build:
+    name: Build for PocketMage
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout repository
+        uses: actions/checkout@v4
+        with:
+          submodules: recursive
+      - name: Build PocketMage app
+        uses: ./.github/actions/pocketmage
+        with:
+          upload_artifact: 'true'
