@@ -146,7 +146,7 @@ void applicationEinkHandler() {
   display.setFullWindow();
   display.fillScreen(GxEPD_WHITE);
   // drawBitmap expects a 1-bit-per-pixel buffer packed 8 horizontal pixels per byte (MSB = leftmost)
-  display.drawBitmap(0, 0, dispW, dispH, buf);
+  display.drawBitmap(0, 0, buf, dispW, dispH, GxEPD_BLACK, GxEPD_WHITE);
   EINK().refresh();
 
   // advance frame index
