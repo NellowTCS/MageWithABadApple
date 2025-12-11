@@ -38,14 +38,40 @@ runs:
       shell: bash
       working-directory: MageWithABadApple
       run: |
-        # Rename icon
-        cp MageWithABadApple/MageWithABadApple_ICON.bin MageWithABadApple_ICON.bin
+        set -euo pipefail
 
-        # Rename firmware
-        cp .pio/build/*/firmware.bin MageWithABadApple.bin
+        echo "Working directory: $(pwd)"
+        echo "PlatformIO build dir listing:"
+        ls -la .pio || true
 
-        # Create uncompressed tar
+        # Find the icon file (search recursively but prefer shallow)
+        ICON=$(find . -type f -name '*_ICON.bin' -print -quit || true)
+        if [ -z "$ICON" ]; then
+          echo "ERROR: Icon file (*_ICON.bin) not found in $(pwd)" >&2
+          exit 1
+        fi
+        echo "Found icon: $ICON"
+        cp "$ICON" MageWithABadApple_ICON.bin
+
+        # Find the firmware.bin from any environment directory
+        FIRMWARE=$(find .pio/build -type f -name 'firmware.bin' -print -quit || true)
+        if [ -z "$FIRMWARE" ]; then
+          echo "ERROR: firmware.bin not found under .pio/build in $(pwd)" >&2
+          exit 1
+        fi
+        echo "Found firmware: $FIRMWARE"
+        cp "$FIRMWARE" MageWithABadApple.bin
+
+        # Verify files exist and have size
+        echo "Files to package:"
+        ls -l MageWithABadApple.bin MageWithABadApple_ICON.bin
+
+        # Create uncompressed tar (matching TactileBrowser packaging)
         tar -cf MageWithABadApple.tar MageWithABadApple.bin MageWithABadApple_ICON.bin
+
+        # Show tar contents (for logs/debugging)
+        echo "Tar contents:"
+        tar -tf MageWithABadApple.tar
 
     - name: Update Latest Build
       shell: bash
